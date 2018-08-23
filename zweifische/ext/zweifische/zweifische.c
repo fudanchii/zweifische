@@ -1,6 +1,12 @@
 #include <ruby.h>
 #include "../../../twofish.h"
 
+#define assert_string_type(key) if (TYPE(key) != T_STRING) { rb_raise(rb_eTypeError, "type should be string"); }
+
+#define GET_C_STRPTR(val, str) { assert_string_type(val); str = (unsigned char *)StringValuePtr(val); } while (0)
+
+#define GET_C_STRPTR_AND_LEN(val, str, strlen) { GET_C_STRPTR(val, str); strlen = RSTRING_LEN(val); } while (0)
+
 void cipher_free(void *st);
 
 static const rb_data_type_t twofish_ctx_type = {
@@ -16,15 +22,12 @@ void cipher_free(void *st)
     twofish_free(&twofish_ctx);
 }
 
-#define assert_string_type(key) if (TYPE(key) != T_STRING) { rb_raise(rb_eTypeError, "type should be string"); }
-
 #define CIPHER_ECB_INIT(self, key, len) {                                    \
     unsigned char *sKey;                                                     \
     struct twofish *ctx;                                                     \
     VALUE twofish_ctx;                                                       \
                                                                              \
-    assert_string_type(key);                                                 \
-    sKey = (unsigned char *)StringValuePtr(key);                             \
+    GET_C_STRPTR(key, sKey);                                                 \
                                                                              \
     ctx = twofish_##len##_ecb_init(sKey, (void *)0);                         \
                                                                              \
@@ -45,11 +48,9 @@ static VALUE cipher_128_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, ke
     struct twofish *ctx;                                                    \
     VALUE twofish_ctx;                                                      \
                                                                             \
-    assert_string_type(key);                                                \
-    sKey = (unsigned char *)StringValuePtr(key);                            \
+    GET_C_STRPTR(key, sKey);                                                \
                                                                             \
-    assert_string_type(iv);                                                 \
-    sIV = (unsigned char *)StringValuePtr(iv);                              \
+    GET_C_STRPTR(iv, sIV);                                                  \
                                                                             \
     ctx = twofish_##len##_cbc_init(sKey, sIV);                              \
                                                                             \
@@ -69,11 +70,9 @@ static VALUE cipher_128_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INI
     unsigned int lData, lTargetData;                                              \
     int result;                                                                   \
     struct twofish *ctx;                                                          \
-    VALUE twofish_ctx;                                                            \
+    VALUE twofish_ctx, targetText;                                                \
                                                                                   \
-    assert_string_type(data);                                                     \
-    sData = (unsigned char *)StringValuePtr(data);                                \
-    lData = RSTRING_LEN(data);                                                    \
+    GET_C_STRPTR_AND_LEN(data, sData, lData);                                     \
                                                                                   \
     twofish_ctx = rb_ivar_get(self, rb_intern("twofish_ctx"));                    \
     TypedData_Get_Struct(twofish_ctx, struct twofish, &twofish_ctx_type, ctx);    \
@@ -86,7 +85,9 @@ static VALUE cipher_128_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INI
         rb_raise(rb_eRuntimeError, "provided length must be at least 16 bytes");  \
     }                                                                             \
                                                                                   \
-    return rb_str_new(targetData, result);                                        \
+    targetText = rb_str_new(targetData, result);                                  \
+    xfree(targetData);                                                            \
+    return targetText;                                                            \
 }
 
 static VALUE cipher_encrypt_update(VALUE self, VALUE data) CIPHER_OP(self, data, twofish_encrypt_update);
@@ -98,11 +99,9 @@ static VALUE cipher_encrypt_final_with_pad(VALUE self, VALUE data, VALUE pad)
     unsigned int lData, lTargetData;
     int result;
     struct twofish *ctx;
-    VALUE twofish_ctx;
+    VALUE twofish_ctx, crypted_text;
 
-    assert_string_type(data);
-    sData = (unsigned char *)StringValuePtr(data);
-    lData = RSTRING_LEN(data);
+    GET_C_STRPTR_AND_LEN(data, sData, lData);
 
     twofish_ctx = rb_ivar_get(self, rb_intern("twofish_ctx"));
     TypedData_Get_Struct(twofish_ctx, struct twofish, &twofish_ctx_type, ctx);
@@ -112,10 +111,26 @@ static VALUE cipher_encrypt_final_with_pad(VALUE self, VALUE data, VALUE pad)
     result = twofish_encrypt_final(ctx, sData, lData, targetData, lTargetData);
 
     if (result < 0) {
-        rb_raise(rb_eRuntimeError, "provided length must be at least 16 bytes");
+        VALUE padlen = INT2FIX(-1 * result);
+        VALUE padstr = rb_funcallv_public(pad, rb_intern("pad"), 1, &padlen);
+
+        rb_str_append(data, padstr);
+        GET_C_STRPTR_AND_LEN(data, sData, lData);
+        xfree(targetData);
+
+        lTargetData = ((lData / 16) + 1) * 16;
+        targetData = ALLOC_N(unsigned char, lTargetData);
+        result = twofish_encrypt_final(ctx, sData, lData, targetData, lTargetData);
+
+        if (result < 0) {
+            rb_raise(rb_eRuntimeError, "provided length must be at least 16 bytes, even after padded.");
+        }
     }
 
-    return rb_str_new(targetData, result);
+    crypted_text = rb_str_new(targetData, result);
+    xfree(targetData);
+
+    return crypted_text;
 }
 
 static VALUE cipher_decrypt_update(VALUE self, VALUE crypted) CIPHER_OP(self, crypted, twofish_decrypt_update);
@@ -138,6 +153,8 @@ void Init_zweifische()
 
     rb_define_method(cCipher256ecb, "encrypt_update", cipher_encrypt_update, 1);
     rb_define_method(cCipher256ecb, "c_encrypt_final", cipher_encrypt_final, 1);
+    rb_define_method(cCipher256ecb, "c_encrypt_final_with_pad", cipher_encrypt_final_with_pad, 2);
+
     rb_define_method(cCipher256ecb, "decrypt_update", cipher_decrypt_update, 1);
     rb_define_method(cCipher256ecb, "c_decrypt_final", cipher_decrypt_final, 1);
 
