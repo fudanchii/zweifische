@@ -34,7 +34,7 @@ plain_text = tf.decrypt(crypted_text, pad: Zweifische::ZeroPadding)
 to encrypt stream use `encrypt_update` for each chunks, then `encrypt_final` at the end of the stream.
 
 Notice that padding is specified explicitly above, by default encryption and decryption wont expect any padding in exchange of
-user should explicitly set the data length to be encrypted/decrypted should be a multiple of 16 bytes.
+user should explicitly set the data length to be encrypted/decrypted to be a multiple of 16 bytes.
 
 So this will raise RuntimeError:
 
