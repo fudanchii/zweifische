@@ -7,16 +7,12 @@ Ruby binding for C implementation of twofish from [@drewcsillag](https://github.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'zweifische'
+gem 'zweifische', git: "https://github.com/fudanchii/zweifische"
 ```
 
 And then execute:
 
     $ bundle
-
-Or install it yourself as:
-
-    $ gem install zweifische
 
 ## Usage
 
