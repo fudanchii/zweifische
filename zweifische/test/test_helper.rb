@@ -3,6 +3,10 @@ require "zweifische"
 
 require "minitest/autorun"
 
+def bytes(input)
+  input.force_encoding(Encoding::ASCII_8BIT)
+end
+
 def hexify(input)
-  [input].pack("H*").encode(Encoding::ASCII_8BIT)
+  bytes([input].pack("H*"))
 end
