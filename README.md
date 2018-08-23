@@ -36,7 +36,7 @@ to encrypt stream use `encrypt_update` for each chunks, then `encrypt_final` at 
 Notice that padding is specified explicitly above, by default encryption and decryption wont expect any padding in exchange of
 user should explicitly set the data length to be encrypted/decrypted to be a multiple of 16 bytes.
 
-So this will raise RuntimeError:
+So for example, this will raise RuntimeError:
 
 ```ruby
 key="0123456789123456"
@@ -47,9 +47,9 @@ crypted_text = tf.encrypt("plain text to encrypt here")
 Available padding scheme:
 
 - ANSI X.923 `Zweifische::AnsiX923Padding`
-- ISO/IEC 7816-4 `ISOIEC78164Padding`
-- PKCS7 `PKC7Padding`
-- Zero bytes `ZeroPadding`
+- ISO/IEC 7816-4 `Zweifische::ISOIEC78164Padding`
+- PKCS7 `Zweifische::PKC7Padding`
+- Zero bytes `Zweifische::ZeroPadding`
 
 Just be aware that padding is _not_ bullet-proof, for example using zero bytes padding for data which may contain zero bytes trailer
 may cause all the trailer to be removed at decryption.
