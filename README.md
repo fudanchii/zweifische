@@ -1,45 +1,41 @@
-Optimized implementation of twofish block cipher algorithm in C written by @drewcsillag
+# Zweifische
 
-with stream encryption / decryption API similar to OpenSSL EVP.
+Ruby binding for C implementation of twofish from [@drewcsillag](https://github.com/drewcsillag)
 
-Encryption supported:
-- [x] twofish-256-ecb `twofish_256_ecb_init`
-- [x] twofish-256-cbc `twofish_256_cbc_init`
-- [x] twofish-192-ecb `twofish_192_ecb_init`
-- [x] twofish-192-cbc `twofish_192_cbc_init`
-- [x] twofish-128-ecb `twofish_128_ecb_init`
-- [x] twofish-128-cbc `twofish_128_cbc_init`
+## Installation
 
-bindings:
-- [x] ruby
+Add this line to your application's Gemfile:
 
------------
+```ruby
+gem 'zweifische'
+```
 
-original README:
+And then execute:
 
+    $ bundle
 
-Twofish
------------
-Originally written around 2000-2001 or so.
+Or install it yourself as:
 
-A highly optimized implementation of the
-[twofish](https://www.schneier.com/twofish.html) encryption algorithm
-in C, and one not at all optimized in Python.
+    $ gem install zweifische
 
-Basically, I use the Python version in `myref.py` to precompute some 
-tables into `tables.h`.  From there, there are two C implementations.
-The first in `opt.c`, I attempted to do some funky things in copying
-the function and keying the function directly, as opposed to providing
-keystate to the function.  It turns out, at least at the time, to not
-be faster than the more sane version, *i.e. the one you should actually use*,
-that is in `opt2.c`.  In fact, on more modern Linux versions, `opt.c`
-probably doesn't even work because of the weird way it tries to do
-things.
+## Usage
 
-The Makefile builds the whole thing, and produces an executable named
-`twofish-benchmark`.  If you want to incorporate this into your own
-software, just kill the `main` function and have a blast.
+All key length (256, 192, and 128 bit) is supported. Each respective class can be used directly.
 
-The version in `myref.py` should be fairly readable, as it was designed
-with the idea to reflect the algorithm's definition.  The optimized C
-versions are not designed at all to be readable so much as fast.
+to use:
+```ruby
+require "zweifische"
+
+# ecb mode
+
+# for 128 bit key (16 bytes)
+key="0123456789123456"
+tf = Zweifische::Cipher128ecb.new(key)
+crypted_text = tf.encrypt("plain text to encrypt here")
+```
+
+to encrypt stream use `encrypt_update` for each chunks, then `encrypt_final` at the end of the stream.
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/fudanchii/zweifische.

@@ -3,3 +3,4 @@ twofish-benchmark
 *.so
 *.log
 Gemfile.lock
+/tmp

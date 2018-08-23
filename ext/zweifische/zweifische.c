@@ -1,5 +1,5 @@
 #include <ruby.h>
-#include "../../../twofish.h"
+#include "twofish.h"
 
 #define assert_string_type(key) if (TYPE(key) != T_STRING) { rb_raise(rb_eTypeError, "type should be string"); }
 
