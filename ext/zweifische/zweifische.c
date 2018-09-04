@@ -1,6 +1,15 @@
 #include <ruby.h>
 #include "twofish.h"
 
+#define LEN_ERR_MSG "Provided string must have length at least 16 bytes. " \
+    "You may consider to use any available padding schemes under "         \
+    "Zweifische (e.g. z.encrypt(data, pad: Zweifische::ZeroPadding)), "    \
+    "or you can just explicitly provide string with (multiple of) "        \
+    "16 bytes in length."
+
+#define LEN_PADDED_ERR_MSG "There's error in string length, it should has "\
+    "(multiple of) 16 bytes in length after padding, but it's not."
+
 #define assert_string_type(key) if (TYPE(key) != T_STRING) { rb_raise(rb_eTypeError, "type should be string"); }
 
 #define GET_C_STRPTR(val, str) { assert_string_type(val); str = (unsigned char *)StringValuePtr(val); } while (0)
@@ -82,10 +91,10 @@ static VALUE cipher_128_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INI
     result = operation(ctx, sData, lData, targetData, lTargetData);               \
                                                                                   \
     if (result < 0) {                                                             \
-        rb_raise(rb_eRuntimeError, "provided length must be at least 16 bytes");  \
+        rb_raise(rb_eRuntimeError, LEN_ERR_MSG);                                  \
     }                                                                             \
                                                                                   \
-    targetText = rb_str_new((const char *)targetData, result);                                  \
+    targetText = rb_str_new((const char *)targetData, result);                    \
     xfree(targetData);                                                            \
     return targetText;                                                            \
 }
@@ -123,7 +132,7 @@ static VALUE cipher_encrypt_final_with_pad(VALUE self, VALUE data, VALUE pad)
         result = twofish_encrypt_final(ctx, sData, lData, targetData, lTargetData);
 
         if (result < 0) {
-            rb_raise(rb_eRuntimeError, "provided length must be at least 16 bytes, even after padded.");
+            rb_raise(rb_eRuntimeError, LEN_PADDED_ERR_MSG);
         }
     }
 

@@ -4,3 +4,4 @@ twofish-benchmark
 *.log
 Gemfile.lock
 /tmp
+/pkg
