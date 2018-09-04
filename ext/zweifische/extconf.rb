@@ -10,4 +10,6 @@ have_header "assert.h"
 
 $objs = ["twofish.o", "zweifische.o"]
 
-create_makefile "zweifische/zweifische"
+with_cflags(" -std=c99 -Ofast -pedantic -pedantic-errors -Wall -Werror -Wno-error=attributes ") do
+  create_makefile "zweifische/zweifische"
+end

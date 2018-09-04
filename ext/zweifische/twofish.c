@@ -395,17 +395,17 @@ struct twofish {
  * we wont do any checking here and will assume user already
  * know about it. Twofish is undefined for key larger than 256 bit
  */
-struct twofish *twofish_256_init(BYTE key[32]) TWOFISH_INIT(key, 256);
-struct twofish *twofish_192_init(BYTE key[32]) TWOFISH_INIT(key, 192);
-struct twofish *twofish_128_init(BYTE key[32]) TWOFISH_INIT(key, 128);
+struct twofish *twofish_256_init(BYTE key[32]) TWOFISH_INIT(key, 256)
+struct twofish *twofish_192_init(BYTE key[32]) TWOFISH_INIT(key, 192)
+struct twofish *twofish_128_init(BYTE key[32]) TWOFISH_INIT(key, 128)
 
-struct twofish *twofish_256_ecb_init(BYTE key[32], BYTE iv[16] /* unused */) TWOFISH_ECB_INIT(key, 256);
-struct twofish *twofish_192_ecb_init(BYTE key[32], BYTE iv[16] /* unused */) TWOFISH_ECB_INIT(key, 192);
-struct twofish *twofish_128_ecb_init(BYTE key[32], BYTE iv[16] /* unused */) TWOFISH_ECB_INIT(key, 128);
+struct twofish *twofish_256_ecb_init(BYTE key[32], BYTE iv[16] /* unused */) TWOFISH_ECB_INIT(key, 256)
+struct twofish *twofish_192_ecb_init(BYTE key[32], BYTE iv[16] /* unused */) TWOFISH_ECB_INIT(key, 192)
+struct twofish *twofish_128_ecb_init(BYTE key[32], BYTE iv[16] /* unused */) TWOFISH_ECB_INIT(key, 128)
 
-struct twofish *twofish_256_cbc_init(BYTE key[32], BYTE iv[16]) TWOFISH_CBC_INIT(key, iv, 256);
-struct twofish *twofish_192_cbc_init(BYTE key[32], BYTE iv[16]) TWOFISH_CBC_INIT(key, iv, 192);
-struct twofish *twofish_128_cbc_init(BYTE key[32], BYTE iv[16]) TWOFISH_CBC_INIT(key, iv, 128);
+struct twofish *twofish_256_cbc_init(BYTE key[32], BYTE iv[16]) TWOFISH_CBC_INIT(key, iv, 256)
+struct twofish *twofish_192_cbc_init(BYTE key[32], BYTE iv[16]) TWOFISH_CBC_INIT(key, iv, 192)
+struct twofish *twofish_128_cbc_init(BYTE key[32], BYTE iv[16]) TWOFISH_CBC_INIT(key, iv, 128)
 
 void twofish_free(struct twofish **pctx)
 {

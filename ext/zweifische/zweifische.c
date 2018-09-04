@@ -37,9 +37,9 @@ void cipher_free(void *st)
     return Qnil;                                                             \
 }
 
-static VALUE cipher_256_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, key, 256);
-static VALUE cipher_192_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, key, 192);
-static VALUE cipher_128_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, key, 128);
+static VALUE cipher_256_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, key, 256)
+static VALUE cipher_192_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, key, 192)
+static VALUE cipher_128_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, key, 128)
 
 
 #define CIPHER_CBC_INIT(self, key, iv, len) {                               \
@@ -60,9 +60,9 @@ static VALUE cipher_128_ecb_init(VALUE self, VALUE key) CIPHER_ECB_INIT(self, ke
     return Qnil;                                                            \
 }
 
-static VALUE cipher_256_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INIT(self, key, iv, 256);
-static VALUE cipher_192_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INIT(self, key, iv, 192);
-static VALUE cipher_128_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INIT(self, key, iv, 128);
+static VALUE cipher_256_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INIT(self, key, iv, 256)
+static VALUE cipher_192_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INIT(self, key, iv, 192)
+static VALUE cipher_128_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INIT(self, key, iv, 128)
 
 
 #define CIPHER_OP(self, data, operation) {                                                    \
@@ -85,13 +85,13 @@ static VALUE cipher_128_cbc_init(VALUE self, VALUE key, VALUE iv) CIPHER_CBC_INI
         rb_raise(rb_eRuntimeError, "provided length must be at least 16 bytes");  \
     }                                                                             \
                                                                                   \
-    targetText = rb_str_new(targetData, result);                                  \
+    targetText = rb_str_new((const char *)targetData, result);                                  \
     xfree(targetData);                                                            \
     return targetText;                                                            \
 }
 
-static VALUE cipher_encrypt_update(VALUE self, VALUE data) CIPHER_OP(self, data, twofish_encrypt_update);
-static VALUE cipher_encrypt_final(VALUE self, VALUE data) CIPHER_OP(self, data, twofish_encrypt_final);
+static VALUE cipher_encrypt_update(VALUE self, VALUE data) CIPHER_OP(self, data, twofish_encrypt_update)
+static VALUE cipher_encrypt_final(VALUE self, VALUE data) CIPHER_OP(self, data, twofish_encrypt_final)
 
 static VALUE cipher_encrypt_final_with_pad(VALUE self, VALUE data, VALUE pad)
 {
@@ -127,14 +127,14 @@ static VALUE cipher_encrypt_final_with_pad(VALUE self, VALUE data, VALUE pad)
         }
     }
 
-    crypted_text = rb_str_new(targetData, result);
+    crypted_text = rb_str_new((const char *)targetData, result);
     xfree(targetData);
 
     return crypted_text;
 }
 
-static VALUE cipher_decrypt_update(VALUE self, VALUE crypted) CIPHER_OP(self, crypted, twofish_decrypt_update);
-static VALUE cipher_decrypt_final(VALUE self, VALUE crypted) CIPHER_OP(self, crypted, twofish_decrypt_final);
+static VALUE cipher_decrypt_update(VALUE self, VALUE crypted) CIPHER_OP(self, crypted, twofish_decrypt_update)
+static VALUE cipher_decrypt_final(VALUE self, VALUE crypted) CIPHER_OP(self, crypted, twofish_decrypt_final)
 
 void Init_zweifische()
 {
