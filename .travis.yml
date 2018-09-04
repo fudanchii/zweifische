@@ -18,5 +18,7 @@ before_install: gem install bundler -v 1.16.3
 install:
   - bundle
 script:
-  - bundle exec rake build
+  - bundle exec rake compile
   - bundle exec rake test
+  - bundle exec rake build
+  - bundle exec rake install
