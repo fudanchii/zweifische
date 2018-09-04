@@ -3,5 +3,20 @@ sudo: false
 language: ruby
 cache: bundler
 rvm:
-  - 2.4.2
+  - 2.3.7
+  - 2.4.4
+  - 2.5.0
+  - 2.5.1
+  - 2.6.0
+
+matrix:
+  allow_failures:
+    - rvm: 2.3.7
+    - rvm: 2.6.0
+
 before_install: gem install bundler -v 1.16.3
+install:
+  - bundle
+script:
+  - bundle exec rake build
+  - bundle exec rake test
