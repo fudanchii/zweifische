@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/fudanchii/zweifische.svg?branch=master)](https://travis-ci.com/fudanchii/zweifische)
+
 # Zweifische
 
 Ruby binding for C implementation of twofish from [@drewcsillag](https://github.com/drewcsillag)
