@@ -9,16 +9,28 @@ Ruby binding for C implementation of twofish from [@drewcsillag](https://github.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'zweifische', git: "https://github.com/fudanchii/zweifische"
+gem "zweifische"
+```
+or
+```ruby
+gem "zweifsiche", git: "https://github.com/fudanchii/zweifische"
 ```
 
 And then execute:
-
-    $ bundle
+```
+$ bundle
+```
 
 ## Usage
 
 All key length (256, 192, and 128 bit) is supported. Each respective class can be used directly.
+
+- ECB mode with 128 bit key: `Zweifische::Cipher128ecb`
+- ECB mode with 192 bit key: `Zweifische::Cipher192ecb`
+- ECB mode with 256 bit key: `Zweifische::Cipher256ecb`
+- CBC mode with 128 bit key: `Zweifische::Cipher128cbc`
+- CBC mode with 192 bit key: `Zweifische::Cipher192cbc`
+- CBC mode with 256 bit key: `Zweifische::Cipher256cbc`
 
 to use:
 ```ruby
