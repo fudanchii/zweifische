@@ -10,7 +10,9 @@ Gem::Specification.new do |spec|
   spec.email         = ["nurahmadie@gmail.com"]
 
   spec.summary       = %q{Ruby binding for @drewcsillag twofish implementation}
-  spec.homepage      = "https://github.com/fudanchii/twofish"
+  spec.homepage      = "https://github.com/fudanchii/zweifische"
+
+  spec.licenses      = ["MIT"]
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
